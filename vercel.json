@@ -1,84 +1,19 @@
 {
-  "version": 2,
-  "name": "muju-website",
-  "routes": [
-    {
-      "src": "/photo/(.*)",
-      "dest": "/photo/$1"
-    },
-    {
-      "src": "/muju\\.html",
-      "dest": "/muju.html"
-    },
-    {
-      "src": "/(.*)\\.html",
-      "dest": "/$1.html"
-    },
-    {
-      "src": "^/$",
-      "dest": "/muju.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/muju.html"
-    }
-  ],
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/photo/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/(.*)\\.webp",
+      "source": "/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Content-Type",
-          "value": "image/webp"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)?",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
-  ],
-  "redirects": [
-    {
-      "source": "/index.html",
-      "destination": "/muju.html",
-      "permanent": true
-    }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
