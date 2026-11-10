@@ -1,14 +1,6 @@
 {
   "version": 2,
   "name": "muju-website",
-  "alias": ["muju-website"],
-  "buildCommand": "echo 'Static site, no build needed'",
-  "builds": [
-    {
-      "src": "muju.html",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
