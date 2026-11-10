@@ -2,7 +2,6 @@
   "version": 2,
   "name": "muju-website",
   "alias": ["muju-website"],
-  "env": [],
   "buildCommand": "echo 'Static site, no build needed'",
   "builds": [
     {
