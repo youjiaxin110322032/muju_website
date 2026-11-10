@@ -3,17 +3,24 @@
   "name": "muju-website",
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/muju.html",
-      "status": 200
-    },
-    {
       "src": "/photo/(.*)",
       "dest": "/photo/$1"
     },
     {
+      "src": "/muju\\.html",
+      "dest": "/muju.html"
+    },
+    {
       "src": "/(.*)\\.html",
       "dest": "/$1.html"
+    },
+    {
+      "src": "^/$",
+      "dest": "/muju.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/muju.html"
     }
   ],
   "headers": [
