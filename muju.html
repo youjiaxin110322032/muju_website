@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="無住 MUJU 日式侘寂茶具與禮儀工坊。傳承百年茶道儀軌，融合現代極簡美學，提供專屬的侘寂茶道體驗。">
+    <meta name="keywords" content="茶道,日式茶具,侘寂,茶碗,茶道工坊,日本文化">
+    <meta name="author" content="MUJU Studio">
+    <meta name="theme-color" content="#0d0c0b">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="無住 MUJU | 日式侘寂茶具與禮儀工坊">
+    <meta property="og:description" content="傳承百年茶道儀軌，結合現代極簡美學，重新定義器物與心靈的對話。">
+    <meta property="og:image" content="photo/pexels-20710970-31203654.webp">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "MUJU Studio",
+        "description": "日式侘寂茶具與禮儀工坊",
+        "url": "https://muju-studio.com",
+        "location": {
+            "@type": "Place",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Tokyo",
+                "addressCountry": "JP"
+            }
+        }
+    }
+    </script>
+
+    <title>無住 MUJU | 日式侘寂茶具與禮儀工坊</title>
+
+    <!-- Google Fonts with font-display: swap for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@300;400;500;600&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ash: {
+                            950: '#0d0c0b',
+                            900: '#151412',
+                            800: '#23211e',
+                            700: '#383531',
+                        },
+                        clay: {
+                            400: '#a89f91',
+                            300: '#c2baba',
+                            200: '#dfdbd4',
+                            100: '#f0eee9',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans:['"Noto Sans TC"', 'sans-serif'],
+                        display: ['"Cinzel"', 'serif'],
+                    },
+                    transitionTimingFunction: {
+                        'custom-ease': 'cubic-bezier(0.19, 1, 0.22, 1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        /* Base & Reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #0d0c0b; /* ash-950 */
+            color: #dfdbd4; /* clay-200 */
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: #dfdbd4;
+            color: #0d0c0b;
+        }
+
+        .cursor-dot,
+        .cursor-ring {
+            display: none;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
+            .cursor-dot,
+            .cursor-ring { display: block; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Global Noise Texture */
+        .noise-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Vertical Guide Lines */
+        .guides {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5vw;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.04;
+        }
+        .guide-line {
+            width: 1px;
+            height: 100%;
+            background-color: #f0eee9;
+        }
+
+        /* Custom Cursor (Mix-blend-mode) */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), height 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            will-change: transform, width, height;
+        }
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), height 0.3s cubic-bezier(0.19, 1, 0.22, 1), background-color 0.3s;
+            will-change: transform;
+        }
+        .cursor-hover .cursor-dot { width: 60px; height: 60px; background-color: white; }
+        .cursor-hover .cursor-ring { width: 0; height: 0; opacity: 0; }
+
+        /* Flashlight Effect */
+        .flashlight-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(circle 600px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.06), transparent 80%);
+            will-change: background;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem; /* Corner Radius System */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Infinite Marquee */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            display: flex;
+        }
+        .marquee-content {
+            display: inline-flex;
+            animation: marquee 25s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Vertical Text Clip Utility */
+        .clip-text-wrap {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .clip-text-inner {
+            display: inline-block;
+            will-change: transform;
+        }
+
+        /* Sonar Pulse Setup */
+        .sonar-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sonar-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(223, 219, 212, 0.6); /* clay-200 */
+            pointer-events: none;
+        }
+
+        /* Numbering */
+        .section-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: rgba(168, 159, 145, 0.5); /* clay-400 */
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Global Elements -->
+    <div class="noise-bg"></div>
+    <div class="guides">
+        <div class="guide-line"></div><div class="guide-line"></div><div class="guide-line"></div><div class="guide-line"></div><div class="guide-line"></div>
+    </div>
+    <div class="flashlight-overlay" id="flashlight"></div>
+    <div class="cursor-dot" id="c-dot"></div>
+    <div class="cursor-ring" id="c-ring"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-6 md:px-12 flex justify-between items-center mix-blend-difference" role="navigation" aria-label="主導航">
+        <a href="#top" class="font-display text-2xl tracking-[0.2em] text-white hover-trigger cursor-pointer" aria-label="MUJU 首頁">MUJU</a>
+        <button id="menu-toggle" type="button" class="flex flex-col gap-2 w-8 hover-trigger group" aria-label="打開菜單" aria-expanded="false" aria-controls="mobile-menu">
+            <span class="w-full h-[1px] bg-white transform origin-right transition-transform duration-500 group-hover:scale-x-75" aria-hidden="true"></span>
+            <span class="w-2/3 h-[1px] bg-white ml-auto transform origin-right transition-transform duration-500 group-hover:scale-x-100" aria-hidden="true"></span>
+        </button>
+    </nav>
+    <div id="mobile-menu" hidden class="fixed right-6 top-20 z-50 w-56 rounded-2xl border border-white/10 bg-ash-900/95 p-5 shadow-2xl backdrop-blur-xl md:right-12" aria-label="網站導覽">
+        <div class="flex flex-col gap-5 font-sans text-sm tracking-widest text-clay-200">
+            <a href="#values" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-clay-300 rounded">工坊精神</a>
+            <a href="#experience" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-clay-300 rounded">茶道體驗</a>
+            <a href="#gallery" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-clay-300 rounded">作品影像</a>
+            <a href="#contact" class="hover:text-white focus:outline-none focus:ring-2 focus:ring-clay-300 rounded">聯絡工坊</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header id="top" class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden z-10 pt-20">
+        <!-- Parallax BG -->
+        <div class="absolute inset-0 w-full h-[120%] -top-[10%] z-0" data-speed="0.6" id="hero-bg">
+            <img src="photo/pexels-20710970-31203654.webp"
+                 alt="侘寂手作陶器與茶具"
+                 loading="eager"
+                 fetchpriority="high"
+                 decoding="async"
+                 class="w-full h-full object-cover opacity-30 grayscale mix-blend-luminosity"
+                 onerror="this.hidden = true">
+            <div class="absolute inset-0 bg-gradient-to-b from-ash-950/20 via-transparent to-ash-950"></div>
+        </div>
+
+        <div class="relative z-10 text-center flex flex-col items-center">
+            <div class="section-num mb-6 reveal-clip" aria-label="成立於2026年東京">
+                <span class="clip-text-inner">EST. 2026 / TOKYO</span>
+            </div>
+
+            <h1 class="font-serif text-6xl md:text-8xl lg:text-[10rem] leading-none tracking-tight text-clay-100 flex flex-col items-center gap-2">
+                <span class="clip-text-wrap"><span class="clip-text-inner hero-title">無住</span></span>
+                <span class="clip-text-wrap text-2xl md:text-4xl lg:text-5xl font-display tracking-[0.5em] mt-4 opacity-80"><span class="clip-text-inner hero-title">MUJU STUDIO</span></span>
+            </h1>
+
+            <p class="font-sans text-clay-400 mt-8 max-w-md text-sm md:text-base tracking-widest leading-loose font-light clip-text-wrap">
+                <span class="clip-text-inner hero-sub">一期一會，褪去繁雜<br>在不完美中尋覓極致的平靜本相。</span>
+            </p>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-12 flex flex-col items-center gap-4 opacity-50 reveal-clip">
+            <span class="text-[10px] uppercase tracking-[0.3em] font-display origin-left rotate-90 mb-6 clip-text-inner">Scroll</span>
+            <div class="w-[1px] h-12 bg-clay-400/30 overflow-hidden relative">
+                <div class="w-full h-full bg-clay-200 absolute top-0 left-0 -translate-y-full animate-[scroll-down_2s_ease-in-out_infinite]"></div>
+            </div>
+        </div>
+        <style>@keyframes scroll-down { 0% { transform: translateY(-100%); } 50% { transform: translateY(0); } 100% { transform: translateY(100%); } }</style>
+    </header>
+
+    <!-- Infinite Marquee Section -->
+    <section class="w-full py-8 border-y border-white/5 bg-ash-900/50 z-10 relative overflow-hidden backdrop-blur-sm">
+        <div class="marquee-container text-clay-400 font-display text-sm md:text-lg tracking-[0.3em] uppercase">
+            <div class="marquee-content items-center">
+                <!-- Duplicate content for seamless loop -->
+                <span class="mx-8">Wabi-Sabi</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Tea Ceremony</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Imperfection</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Mindfulness</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Tranquility</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                
+                <span class="mx-8">Wabi-Sabi</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Tea Ceremony</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Imperfection</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Mindfulness</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+                <span class="mx-8">Tranquility</span><iconify-icon icon="ph:asterisk-light" class="text-xs"></iconify-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values: Advanced Glassmorphism -->
+    <section class="relative w-full py-32 px-6 md:px-12 z-10" id="values">
+        <!-- Parallax Background Image for Glassmorphism contrast -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img src="photo/pexels-xiaa-34882927.webp"
+                 class="w-full h-[130%] object-cover opacity-20 grayscale"
+                 data-speed="0.2"
+                 id="values-bg"
+                 alt="茶道質地背景"
+                 loading="lazy"
+                 decoding="async"
+                 onerror="this.hidden = true">
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-end gap-8">
+                <div>
+                    <div class="section-num mb-4">01. PHILOSOPHY</div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-clay-100 gs-reveal">工坊精神</h2>
+                </div>
+                <p class="font-sans text-clay-400 text-sm tracking-widest max-w-xs leading-relaxed gs-reveal">傳承百年茶道儀軌，結合現代極簡美學，重新定義器物與心靈的對話。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <!-- Card 1 -->
+                <div class="glass-panel p-8 md:p-10 flex flex-col justify-between aspect-square group hover-trigger gs-card">
+                    <div class="flex justify-between items-start">
+                        <span class="font-display text-4xl text-white/20 group-hover:text-white/40 transition-colors duration-500">I</span>
+                        <iconify-icon icon="ph:bowl-steam-light" class="text-3xl text-clay-300"></iconify-icon>
+                    </div>
+                    <div>
+                        <h3 class="font-serif text-2xl text-clay-100 mb-4">殘缺之美</h3>
+                        <p class="font-sans text-sm text-clay-400 leading-relaxed font-light">擁抱器物上的冰裂與窯變，看見歲月留下的獨特印記。不完美，成就了無可取代的靈魂。</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-panel p-8 md:p-10 flex flex-col justify-between aspect-square group hover-trigger gs-card mt-0 md:mt-12">
+                    <div class="flex justify-between items-start">
+                        <span class="font-display text-4xl text-white/20 group-hover:text-white/40 transition-colors duration-500">II</span>
+                        <iconify-icon icon="ph:flower-lotus-light" class="text-3xl text-clay-300"></iconify-icon>
+                    </div>
+                    <div>
+                        <h3 class="font-serif text-2xl text-clay-100 mb-4">一期一會</h3>
+                        <p class="font-sans text-sm text-clay-400 leading-relaxed font-light">專注當下每一次注水與拂塵，將瞬間化為永恆的茶道體驗。相聚此刻，即是絕版。</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass-panel p-8 md:p-10 flex flex-col justify-between aspect-square group hover-trigger gs-card mt-0 md:mt-24">
+                    <div class="flex justify-between items-start">
+                        <span class="font-display text-4xl text-white/20 group-hover:text-white/40 transition-colors duration-500">III</span>
+                        <iconify-icon icon="ph:wind-light" class="text-3xl text-clay-300"></iconify-icon>
+                    </div>
+                    <div>
+                        <h3 class="font-serif text-2xl text-clay-100 mb-4">心無罣礙</h3>
+                        <p class="font-sans text-sm text-clay-400 leading-relaxed font-light">透過嚴謹而流暢的禮儀，褪去繁雜，回歸內心的平靜本相。茶煙起，俗念散。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Gallery with Sonar Pulse -->
+    <section class="relative w-full py-32 px-6 md:px-12 bg-ash-950 z-10 overflow-hidden" id="experience">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            
+            <!-- Left Text -->
+            <div class="w-full md:w-1/3 flex flex-col z-10">
+                <div class="section-num mb-4">02. EXPERIENCE</div>
+                <h2 class="font-serif text-4xl md:text-5xl text-clay-100 mb-8 leading-tight gs-reveal">靜聽<br>水沸之音</h2>
+                <p class="font-sans text-clay-400 text-sm leading-relaxed mb-12 gs-reveal">
+                    從選器、備水到點茶，每一個動作皆是修行。<br>我們的工坊提供專屬的侘寂茶道體驗，讓您在都市喧囂中，尋得一處寂靜之所。
+                </p>
+                
+                <!-- CTA Button with Magnetic/Sonar trigger area -->
+                <div class="w-fit hover-trigger gs-reveal">
+                    <a href="#contact" class="relative flex items-center gap-4 group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-clay-300 rounded-full px-4 py-2" title="聯絡工坊預約茶道體驗">
+                        <div class="w-12 h-12 rounded-full border border-clay-300 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:bg-clay-100 group-hover:text-ash-950" aria-hidden="true">
+                            <iconify-icon icon="ph:arrow-right-light" class="text-xl"></iconify-icon>
+                        </div>
+                        <span class="font-display tracking-[0.2em] text-sm uppercase text-clay-200">預約靜心之境</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Image with Sonar Effect -->
+            <div class="w-full md:w-2/3 relative h-[60vh] md:h-[80vh] rounded-3xl overflow-hidden group">
+                <img src="photo/pexels-teddy-7300494.webp"
+                     alt="身著和服的茶道師進行茶道儀式"
+                     loading="lazy"
+                     decoding="async"
+                     class="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
+                     onerror="this.hidden = true">
+                <div class="absolute inset-0 bg-ash-950/20 group-hover:bg-transparent transition-colors duration-1000"></div>
+                
+                <!-- Sonar Pulse Target (Interactive point on the image) -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sonar-wrapper hover-trigger" id="sonar-target">
+                    <div class="w-4 h-4 bg-white rounded-full relative z-10 shadow-[0_0_15px_rgba(255,255,255,0.8)]"></div>
+                    <!-- Sonar rings injected via JS -->
+                </div>
+                
+                <div class="absolute bottom-8 right-8 text-right mix-blend-difference text-white pointer-events-none">
+                    <div class="font-serif text-lg tracking-widest">茶道儀式</div>
+                    <div class="font-display text-xs tracking-[0.2em] opacity-60">SADO EXPERIENCE</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Studio Gallery -->
+    <section id="gallery" class="relative z-10 bg-ash-900 py-24 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
+                <div>
+                    <div class="section-num mb-4">03. STUDIO GALLERY</div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-clay-100">器物與風景</h2>
+                </div>
+                <p class="font-sans text-clay-400 text-sm tracking-widest max-w-xs leading-relaxed">
+                    從手作器皿到庭園一隅，收藏每一份安靜而真實的日常。
+                </p>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                <figure class="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-ash-800">
+                    <img src="photo/pexels-li-chunyu-2156528508-38751951.webp"
+                         alt="茶席上的白色茶壺與茶杯"
+                         loading="lazy"
+                         decoding="async"
+                         class="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                         onerror="this.hidden = true">
+                    <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 font-serif text-sm tracking-widest text-clay-100">一席茶事</figcaption>
+                </figure>
+                <figure class="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-ash-800">
+                    <img src="photo/pexels-szymon-shields-1503561-39692092.webp"
+                         alt="深色背景中的手作陶壺"
+                         loading="lazy"
+                         decoding="async"
+                         class="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                         onerror="this.hidden = true">
+                    <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 font-serif text-sm tracking-widest text-clay-100">窯火之痕</figcaption>
+                </figure>
+                <figure class="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-ash-800">
+                    <img src="photo/pexels-madalina-enache-1540051428-27359227.webp"
+                         alt="陶器花器中的芒草"
+                         loading="lazy"
+                         decoding="async"
+                         class="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                         onerror="this.hidden = true">
+                    <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 font-serif text-sm tracking-widest text-clay-100">留白之間</figcaption>
+                </figure>
+                <figure class="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-ash-800">
+                    <img src="photo/pexels-yigit-surenoglu-2153113212-38213634.webp"
+                         alt="綠蔭環繞的日本古寺庭園"
+                         loading="lazy"
+                         decoding="async"
+                         class="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                         onerror="this.hidden = true">
+                    <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 font-serif text-sm tracking-widest text-clay-100">靜寂庭園</figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partner Logos (Iconify Simple Icons) -->
+    <section class="w-full bg-ash-900 py-16 border-t border-white/5 relative z-10">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="section-num text-center mb-10">FEATURED IN</div>
+            <div class="flex flex-wrap justify-center md:justify-between items-center gap-12 opacity-30 grayscale transition-opacity duration-500 hover:opacity-80">
+                <iconify-icon icon="simple-icons:kinfolk" width="80" class="hover-trigger"></iconify-icon>
+                <iconify-icon icon="simple-icons:vogue" width="60" class="hover-trigger"></iconify-icon>
+                <iconify-icon icon="simple-icons:monocle" fallback-icon="simple-icons:medium" width="50" class="hover-trigger"></iconify-icon>
+                <iconify-icon icon="simple-icons:dezeen" fallback-icon="simple-icons:squarespace" width="70" class="hover-trigger"></iconify-icon>
+                <iconify-icon icon="simple-icons:awwwards" width="40" class="hover-trigger"></iconify-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="w-full bg-ash-950 py-16 px-6 md:px-12 border-t border-white/5 relative z-10 text-center md:text-left">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex flex-col items-center md:items-start">
+                <h2 class="font-display text-3xl tracking-[0.3em] text-white mb-2">MUJU</h2>
+                <p class="text-clay-400 font-sans text-xs tracking-[0.2em]">無住 • 日式侘寂茶具與禮儀工坊</p>
+            </div>
+
+            <nav class="flex gap-8 font-sans text-xs tracking-widest text-clay-400" aria-label="社交媒體">
+                <a href="https://instagram.com" class="hover:text-white transition-colors hover-trigger uppercase focus:outline-none focus:ring-2 focus:ring-clay-300 px-2 py-1 rounded" title="在Instagram上訪問我們">Instagram</a>
+                <a href="https://twitter.com" class="hover:text-white transition-colors hover-trigger uppercase focus:outline-none focus:ring-2 focus:ring-clay-300 px-2 py-1 rounded" title="在Twitter上訪問我們">Twitter</a>
+                <a href="mailto:contact@muju.studio" class="hover:text-white transition-colors hover-trigger uppercase focus:outline-none focus:ring-2 focus:ring-clay-300 px-2 py-1 rounded" title="發送郵件給我們">Contact</a>
+            </nav>
+        </div>
+        <div class="max-w-7xl mx-auto mt-16 text-center text-clay-400/30 text-[10px] tracking-widest uppercase font-display">
+            <p>© 2026 MUJU STUDIO. All rights reserved. <br class="md:hidden">Crafted with Zen.</p>
+        </div>
+    </footer>
+
+    <!-- Script Logic -->
+    <script defer>
+        // 1. Setup & Utilities
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (menuToggle && mobileMenu) {
+            const closeMenu = () => {
+                mobileMenu.hidden = true;
+                menuToggle.setAttribute('aria-expanded', 'false');
+                menuToggle.setAttribute('aria-label', '打開菜單');
+            };
+
+            menuToggle.addEventListener('click', () => {
+                const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+                mobileMenu.hidden = isOpen;
+                menuToggle.setAttribute('aria-expanded', String(!isOpen));
+                menuToggle.setAttribute('aria-label', isOpen ? '打開菜單' : '關閉菜單');
+            });
+
+            mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape' && !mobileMenu.hidden) {
+                    closeMenu();
+                    menuToggle.focus();
+                }
+            });
+        }
+
+        if (window.gsap && window.ScrollTrigger) {
+            gsap.registerPlugin(ScrollTrigger);
+        }
+
+        // 2. Custom Cursor Logic (Mix-blend-mode difference)
+        if (finePointer && !prefersReducedMotion) try {
+            const cDot = document.getElementById('c-dot');
+            const cRing = document.getElementById('c-ring');
+            const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+            if (!cDot || !cRing) throw new Error('Cursor elements not found');
+
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let dotX = mouseX, dotY = mouseY;
+            let ringX = mouseX, ringY = mouseY;
+
+            const onMouseMove = (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            };
+
+            window.addEventListener('mousemove', onMouseMove, { passive: true });
+
+            // Smooth animation using GSAP Ticker
+            if (window.gsap) {
+                gsap.ticker.add(() => {
+                    // Fast follow for dot
+                    dotX += (mouseX - dotX) * 0.2;
+                    dotY += (mouseY - dotY) * 0.2;
+                    cDot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`;
+
+                    // Slow follow for ring
+                    ringX += (mouseX - ringX) * 0.1;
+                    ringY += (mouseY - ringY) * 0.1;
+                    cRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+                });
+            }
+
+            // Hover state class toggling
+            hoverTriggers.forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'), false);
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'), false);
+            });
+        } catch (err) {
+            console.warn('Cursor functionality disabled:', err.message);
+        }
+
+        // 3. Flashlight Effect Logic
+        if (finePointer && !prefersReducedMotion) try {
+            const flashlight = document.getElementById('flashlight');
+            if (flashlight) {
+                window.addEventListener('mousemove', (e) => {
+                    const x = (e.clientX / window.innerWidth) * 100;
+                    const y = (e.clientY / window.innerHeight) * 100;
+                    flashlight.style.setProperty('--x', `${x}%`);
+                    flashlight.style.setProperty('--y', `${y}%`);
+                }, { passive: true });
+            }
+        } catch (err) {
+            console.warn('Flashlight effect error:', err.message);
+        }
+
+        // 4. Parallax Image Effects
+        try {
+            if (window.gsap && window.ScrollTrigger && !prefersReducedMotion) {
+                gsap.utils.toArray('[data-speed]').forEach(el => {
+                    const speed = parseFloat(el.getAttribute('data-speed'));
+                    gsap.to(el, {
+                        yPercent: speed * 50,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: el.parentElement,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    });
+                });
+            }
+        } catch (err) {
+            console.warn('Parallax effect error:', err.message);
+        }
+
+        // 5. Vertical Text Clip Reveal (Hero Initial Load)
+        try {
+            if (window.gsap && !prefersReducedMotion) {
+                window.addEventListener('load', () => {
+                    const tl = gsap.timeline();
+
+                    // Set initial state
+                    gsap.set('.clip-text-inner', { yPercent: 100 });
+
+                    tl.to('.clip-text-inner.hero-title', {
+                        yPercent: 0,
+                        duration: 1.2,
+                        stagger: 0.1,
+                        ease: "power4.out",
+                        delay: 0.2
+                    })
+                    .to('.clip-text-inner.hero-sub', {
+                        yPercent: 0,
+                        duration: 1,
+                        ease: "power3.out"
+                    }, "-=0.8")
+                    .to('.reveal-clip .clip-text-inner', {
+                        yPercent: 0,
+                        duration: 1,
+                        stagger: 0.2,
+                        ease: "power3.out"
+                    }, "-=0.6");
+                });
+            }
+        } catch (err) {
+            console.warn('Text reveal animation error:', err.message);
+        }
+
+        // 6. Scroll Trigger Reveals for Elements
+        try {
+            if (window.gsap && window.ScrollTrigger && !prefersReducedMotion) {
+                // General Fade/Slide up
+                gsap.utils.toArray('.gs-reveal').forEach(el => {
+                    gsap.fromTo(el,
+                        { y: 50, opacity: 0 },
+                        {
+                            y: 0, opacity: 1, duration: 1, ease: "power3.out",
+                            scrollTrigger: {
+                                trigger: el,
+                                start: "top 85%",
+                                toggleActions: "play none none reverse"
+                            }
+                        }
+                    );
+                });
+
+                // Glassmorphism Cards Stagger
+                if (window.ScrollTrigger && window.ScrollTrigger.batch) {
+                    ScrollTrigger.batch(".gs-card", {
+                        start: "top 80%",
+                        onEnter: batch => gsap.fromTo(batch,
+                            { y: 60, opacity: 0 },
+                            { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out" }
+                        ),
+                        onLeaveBack: batch => gsap.to(batch, { y: 60, opacity: 0, duration: 0.8 })
+                    });
+                }
+            }
+        } catch (err) {
+            console.warn('Scroll trigger error:', err.message);
+        }
+
+        // 7. Anime.js Sonar Pulse Effect
+        try {
+            if (window.anime && !prefersReducedMotion) {
+                const sonarTarget = document.getElementById('sonar-target');
+                if (sonarTarget) {
+                    const numRings = 3;
+
+                    // Create ring elements
+                    for(let i=0; i<numRings; i++){
+                        let ring = document.createElement('div');
+                        ring.classList.add('sonar-ring');
+                        ring.style.width = '20px';
+                        ring.style.height = '20px';
+                        sonarTarget.appendChild(ring);
+                    }
+
+                    const rings = document.querySelectorAll('.sonar-ring');
+
+                    // Anime.js animation
+                    function playSonar() {
+                        anime({
+                            targets: rings,
+                            width: ['20px', '150px'],
+                            height: ['20px', '150px'],
+                            opacity: [1, 0],
+                            borderWidth: ['2px', '0px'],
+                            duration: 3000,
+                            delay: anime.stagger(800),
+                            easing: 'easeOutSine',
+                            loop: true
+                        });
+                    }
+
+                    // Start sonar slightly after load
+                    setTimeout(playSonar, 2000);
+
+                    // Optional: Interactive pulse on click
+                    sonarTarget.addEventListener('click', () => {
+                        let burst = document.createElement('div');
+                        burst.classList.add('sonar-ring');
+                        burst.style.width = '20px';
+                        burst.style.height = '20px';
+                        burst.style.backgroundColor = 'rgba(255,255,255,0.8)';
+                        sonarTarget.appendChild(burst);
+
+                        anime({
+                            targets: burst,
+                            width: 300,
+                            height: 300,
+                            opacity: 0,
+                            duration: 1000,
+                            easing: 'easeOutQuad',
+                            complete: function(anim) {
+                                burst.remove();
+                            }
+                        });
+                    });
+                }
+            }
+        } catch (err) {
+            console.warn('Sonar pulse effect error:', err.message);
+        }
+
+    </script>
+</body>
+</html>
